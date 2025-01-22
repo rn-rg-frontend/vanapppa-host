@@ -1,0 +1,91 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Van.master.cs" Inherits="vansystem.Van" %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="FES">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="vali/img/favicon.png" />
+    <title>Van - Dashboard</title>
+    <link rel="stylesheet" href="vali/css/main.css">
+    <link rel="stylesheet" type="text/css" href="vali/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="vali/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="vali/css/font-awesome-custom.css">
+    <link rel="stylesheet" type="text/css" href="vali/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="global/css/ol4.css">
+    <script type="text/javascript" src="vali/js/jquery-3.2.1.min.js"></script>
+    <script>
+        var url = window.location;
+        // for sidebar menu but not for treeview submenu
+        $('ul.app-menu a').filter(function () {
+            return this.href == url;
+        }).parent().siblings().removeClass('active').end().addClass('active');
+        // for treeview which is like a submenu
+        $('ul.treeview-menu a').filter(function () {
+            return this.href == url;
+        }).parentsUntil(".app-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+    </script>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body class="app  sidebar-mini ">
+    <form id="form1" runat="server">
+        <div>
+            <div id="loader">
+                <div class="sk-folding-cube">
+                    <div class="sk-cube1 sk-cube"></div>
+                    <div class="sk-cube2 sk-cube"></div>
+                    <div class="sk-cube4 sk-cube"></div>
+                    <div class="sk-cube3 sk-cube"></div>
+                    <em>Van</em>
+                </div>
+            </div>
+            <header class="app-header" style="background: #fff; border-bottom: 4px solid #004990;">
+             <%--   <a class="app-sidebar__toggle" href="#" data-toggle="sidebar"></a>--%>
+                <div> <h1>&nbsp;&nbsp;&nbsp;</h1></div>
+                <a href="">
+                    <img src="vali/img/van-logo.jpg" alt="logo" /></a>
+                <ul class="app-nav">
+                    <li class="dropdown">
+                        <a class="app-nav__item" href="#" data-toggle="dropdown"><i class="fa fa-user fa-lg"></i></a>
+                        <ul class="dropdown-menu settings-menu dropdown-menu-right">
+                            <li>
+                                
+                            </li>
+                            
+                        </ul>
+                    </li>
+                </ul>
+            </header>
+            <!--div class="app-sidebar__overlay" data-toggle="sidebar"></div-->
+            <%--<aside class="app-sidebar">
+                <div class="app-sidebar__user">
+                    <!--<img class="app-sidebar__user-avatar" src="" alt="User Image">-->
+                    <span style="display: inline-block; border: 1px solid #fff; background: #36b439; padding: 4px 8px; border-radius: 30px; margin-right: 10px;"><i class="fa fa-user" style="font-size: 150%;"></i></span>
+                    <div>
+                       <%-- <p class="app-sidebar__user-name"><%=Session["name"].ToString() %></p>
+                        <p class="app-sidebar__user-designation"><%=Session["designation"].ToString() %></p>
+                    </div>
+                </div>
+                <ul class="app-menu">
+                  
+                </ul>
+            </aside>--%>
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+            <script src="vali/js/plugins/sweetalert.min.js"></script>
+          
+          
+            <script src="vali/js/plugins/pace.min.js"></script>
+            <script src="vali/js/popper.min.js"></script>
+            <script src="vali/js/bootstrap.min.js"></script>
+            <script src="vali/js/main.js"></script>
+            <script src="vali/js/custom.js"></script>
+        </div>
+    </form>
+</body>
+</html>
+

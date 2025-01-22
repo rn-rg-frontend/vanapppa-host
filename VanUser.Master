@@ -1,0 +1,883 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="VanUser.master.cs" Inherits="vansystem.VanUser" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="FES">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="vali/img/favicon.png" />
+    <title>Van - Upload Forest Admin Boundaries</title>
+    <link rel="stylesheet" type="text/css" href="vali/css/main.css">
+
+
+    <link rel="stylesheet" type="text/css" href="vali/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="vali/css/font-awesome.min.css">
+    <%--<link rel="stylesheet" type="text/css" href="vali/css/font-awesome-custom.css">--%>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="vali/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="global/css/ol4.css">
+
+    <script src="vali/js/jquery-3.2.1.min.js"></script>
+    <link media="screen" rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+    <script>
+
+        //$('.datePicker').datepicker({
+        //    autoclose: true
+        //});
+
+        var url = window.location;
+        // for sidebar menu but not for treeview submenu
+        $('ul.app-menu a').filter(function () {
+            return this.href == url;
+        }).parent().siblings().removeClass('active').end().addClass('active');
+        // for treeview which is like a submenu
+        $('ul.treeview-menu a').filter(function () {
+            return this.href == url;
+        }).parentsUntil(".app-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+    </script>
+    <%-- <style>
+        .treeview-menu{
+            overflow-y:scroll;
+        }
+    </style>--%>
+
+    <style>
+        /* Base styles for all screen sizes */
+        /* You can put common styles here */
+
+        /* Styles for mobile devices */
+        @media screen and (max-width: 767px) {
+
+
+            .app-nav {
+                flex: 1 0 auto;
+                margin: -13px;
+                justify-content: flex-end;
+            }
+        }
+
+        @media screen and (min-width: 767px) and (max-width: 1023px) {
+            .app-nav {
+                flex: 1 0 auto;
+                justify-content: flex-end;
+                margin: -13px;
+            }
+        }
+
+        .app-sidebar__user-name {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            padding-left: 0 !important;
+        }
+
+        #ContentPlaceHolder1{
+           flex: 1; /* Fill the remaining space */
+            transition: margin-left 0.3s ease;
+        }
+
+    </style>
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body class="app sidebar-mini">
+    <form id="form1" runat="server">
+        <div>
+            <div id="loader">
+                <div class="sk-folding-cube">
+                    <div class="sk-cube1 sk-cube"></div>
+                    <div class="sk-cube2 sk-cube"></div>
+                    <div class="sk-cube4 sk-cube"></div>
+                    <div class="sk-cube3 sk-cube"></div>
+                    <em>Van</em>
+                </div>
+            </div>
+            <header class="app-header" style="background: #fff; border-bottom: 4px solid #004990;">
+                <a class="app-sidebar__toggle" href="#" data-toggle="sidebar"></a>
+                <a href="About.aspx">
+                    <img src="vali/img/van-logo.jpg" /></a>
+                <ul class="app-nav">
+                    <asp:Label ID="lblloginsucess" runat="server" Text=""></asp:Label>
+                    <li class="dropdown">
+                        <a class="app-nav__item" href="#" data-toggle="dropdown"><i class="fa fa-user fa-lg"></i></a>
+                        <ul class="dropdown-menu settings-menu dropdown-menu-right">
+                            <li>
+                                <a class="dropdown-item" href="About.aspx">
+                                    <i class="fa fa-address-book fa-lg"></i>My Account
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="LogoutPage.aspx">
+                                    <i class="fa fa-sign-in fa-lg"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </header>
+
+            <aside class="app-sidebar">
+                <div class="app-sidebar__user">
+
+                    <span style="display: inline-block; border: 1px solid #fff; background: #36b439; padding: 4px 8px; border-radius: 30px; margin-right: 10px;"><i class="fa fa-user" style="font-size: 150%;"></i></span>
+                    <div>
+
+                        <p class="app-sidebar__user-name"><%=Session["name"].ToString() %></p>
+                        <%--<p class="app-sidebar__user-designation"><%=Session["designation"].ToString() %></p>--%>
+                    </div>
+                </div>
+                <%
+                    if(Session["StartPage"]==null)
+            {
+                           %>
+   <ul class="app-menu">
+
+
+       <li><a class="app-menu__item" href="About.aspx"><i class="app-menu__icon fa fa-info fa-fw"></i><span class="app-menu__label">About</span></a></li>
+       <li><a class="app-menu__item" href="dashboard.aspx"><i class="app-menu__icon fa fa-dashboard fa-fw"></i><span class="app-menu__label">Dashboard</span></a></li>
+       <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-upload fa-fw"></i><span class="app-menu__label">Data Upload</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+           <ul class="treeview-menu">
+               <li><a class="treeview-item" href="ForestAdminBoundaries.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Forest Admin Boundaries</a></li>
+               <li><a class="treeview-item" href="AdminSpeciesData.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Species Data</a></li>
+               <li><a class="treeview-item" href="samplingPlots.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Grid Based Sampling for WP</a></li>
+
+           </ul>
+       </li>
+       <li><a class="app-menu__item" href="verifyAdminBoundaries.aspx"><i class="app-menu__icon fa fa-map-o fa-fw"></i><span class="app-menu__label">Forest Boundaries</span><i class="treeview-indicator fa fa-angle-right"></i></a></li>
+       <li class="treeview">
+           <a class="app-menu__item" href="#" data-toggle="treeview">
+               <i class="app-menu__icon fa fa-edit fa-fw"></i>
+               <span class="app-menu__label">Forest Data Forms</span>
+               <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+           </a>
+
+           <ul class="treeview-menu">
+               <li><a class="treeview-item" href="PlotApproach.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Approach</a></li>
+               <li><a class="treeview-item" href="PlotDescription.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Description</a></li>
+               <li><a class="treeview-item" href="PlotEnumeration.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Enumeration</a></li>
+               <%--<li><a class="treeview-item" href="VillageLevelInformation.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Village Level Information</a></li>
+<li><a class="treeview-item" href="Household.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Household</a></li>
+<li><a class="treeview-item" href="TimberExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Timber Extraction</a></li>
+<li><a class="treeview-item" href="NTFPExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>NTFP Extraction</a></li>
+ <li><a class="treeview-item" href="Smalltimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Small Timber Consumption </a></li>
+ <li><a class="treeview-item" href="BambooTimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Bamboo Consumption </a></li>
+ <li><a class="treeview-item" href="AssesmentTOFNonPrivateLandaspx.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Assessment of ToF in Non-Private land</a></li>
+ <li><a class="treeview-item" href="AnnualFuelConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Annual Fuel Consumption </a></li>
+ <li><a class="treeview-item" href="AnnualFodderConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Annual Fodder Consumption </a></li>
+ <li><a class="treeview-item" href="MADPsCollection.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> NTFP (including MADPs) Collection</a></li>
+<li><a class="treeview-item" href="TOF.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Availability of Timber in Tree Outside Forest (TOF)</a></li>
+<li><a class="treeview-item" href="FellingControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Felling Control Form Extraction</a></li>
+<li><a class="treeview-item" href="CoupeControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Coupe Control Form Extraction</a></li>--%>
+           </ul>
+       </li>
+       <li class="treeview">
+           <a class="app-menu__item" href="#" data-toggle="treeview">
+               <i class="app-menu__icon fa fa-tasks fa-fw"></i>
+               <span class="app-menu__label">Socio-Economic Forms</span>
+               <i class="treeview-indicator fa fa-angle-right fa-fwt"></i>
+           </a>
+           <ul class="treeview-menu" style="overflow-y: scroll; height: 20vh;">
+               <li><a class="treeview-item" href="VillageLevelInformation.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Village Level Information</a></li>
+               <li><a class="treeview-item" href="Household.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Household Information</a></li>
+               <li><a class="treeview-item" href="AnnualFodderConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Fodder Consumption </a></li>
+               <li><a class="treeview-item" href="AnnualFuelConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Fuel Consumption </a></li>
+               <li><a class="treeview-item" href="Smalltimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Small Timber Consumption </a></li>
+               <li><a class="treeview-item" href="BambooTimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Bamboo Consumption </a></li>
+
+           </ul>
+       </li>
+       <li class="treeview">
+           <a class="app-menu__item" href="#" data-toggle="treeview">
+               <i class="app-menu__icon fa fa-tasks fa-fw"></i>
+               <span class="app-menu__label">Ecosystem Services</span>
+               <i class="treeview-indicator fa fa-angle-right fa-fwt"></i>
+           </a>
+           <ul class="treeview-menu" style="overflow-y: scroll; height: 20vh; max-width: 221px">
+               <%-- <li>
+    <a class="treeview-item" href="ProvisioningServices.aspx">
+        <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Provisioning Services
+    </a>
+</li>--%>
+               <li><a class="treeview-item" href="TOF.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Availability of Timber in Tree Outside Forest (TOF)</a></li>
+               <li><a class="treeview-item" href="AssesmentTOFNonPrivateLandaspx.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Assessment of ToF in Non-Private land</a></li>
+               <li><a class="treeview-item" href="MADPsCollection.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>NTFP (including MADPs) Collection</a></li>
+               <li>
+                   <a class="treeview-item" href="HydrologicalServices.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Hydrological Services
+                   </a>
+               </li>
+               <li>
+                   <a class="treeview-item" href="CulturalServices.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Cultural/Tourism Services
+                   </a>
+               </li>
+               <li>
+                   <a class="treeview-item" href="PlusTrees.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plus-Trees / Mother Trees / Heritage Trees
+                   </a>
+               </li>
+
+           </ul>
+       </li>
+
+
+       <li class="treeview">
+           <a class="app-menu__item" href="#" data-toggle="treeview">
+               <i class="app-menu__icon fa fa-tasks fa-fw"></i>
+               <span class="app-menu__label">Control Forms</span>
+               <i class="treeview-indicator fa fa-angle-right fa-fwt"></i>
+           </a>
+           <ul class="treeview-menu" style="overflow-y: scroll; height: 20vh; max-width: 221px">
+
+               <li><a class="treeview-item" href="TimberExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Timber Extraction</a></li>
+               <li><a class="treeview-item" href="NTFPExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>NTFP Extraction</a></li>
+               <li><a class="treeview-item" href="FellingControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Felling Control Form</a></li>
+               <li><a class="treeview-item" href="CoupeControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Coupe Control Form</a></li>
+               <li>
+                   <a class="treeview-item" href="Apos.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Plan of Operation (APO)
+                   </a>
+               </li>
+           </ul>
+       </li>
+
+       <li class="treeview">
+           <a class="app-menu__item" href="#" data-toggle="treeview">
+               <i class="app-menu__icon fa fa-file-text-o fa-fw"></i>
+               <span class="app-menu__label">Reports</span>
+               <i class="treeview-indicator fa fa-angle-right fa-fwt"></i>
+           </a>
+           <ul class="treeview-menu" style="overflow-y: scroll; max-height: 200px;">
+               <li>
+                   <a class="treeview-item" href="carbonemissionmain.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Carbon Estimation
+                   </a>
+               </li>
+               <li>
+                   <a class="treeview-item" href="GrowingStockmain.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Growing Stock
+                   </a>
+               </li>
+               <li>
+                   <a class="treeview-item" href="Shannonmain.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Shannon Diversity Index
+                   </a>
+               </li>
+               <li>
+                   <a class="treeview-item" href="Simpsonmain.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Simpson Reciprocal Index
+                   </a>
+               </li>
+               <li>
+                   <a class="treeview-item" href="IVICal.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Importance Value Index (IVI)
+                   </a>
+               </li>
+               <li>
+                   <a class="treeview-item" href="TabularReports.aspx">
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Tabular Reports
+                   </a>
+               </li>
+               <%--  <li>
+    <a class="treeview-item" href="Densewise.aspx">
+        <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Dense-Wise Reports
+    </a>
+</li>
+ <li>
+    <a class="treeview-item" href="DiaClasswise.aspx">
+        <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Dia-Classwise Reports
+    </a>
+</li>
+ <li>
+    <a class="treeview-item" href="StateWise.aspx">
+        <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>State-Wise Reports
+    </a>
+</li>
+ <li>
+    <a class="treeview-item" href="StemCount.aspx">
+        <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>StemCount Reports
+    </a>
+</li>--%>
+           </ul>
+       </li>
+       <li><a class="app-menu__item" href="getGISDashboard.aspx"><i class="app-menu__icon fa fa-globe fa-fw"></i><span class="app-menu__label">GIS Dashboard</span></a></li>
+       <li class="treeview">
+           <a class="app-menu__item" href="#" data-toggle="treeview">
+               <i class="app-menu__icon fa fa-user fa-fw"></i>
+               <span class="app-menu__label">User Management</span>
+               <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+           </a>
+           <ul class="treeview-menu">
+               <li><a class="treeview-item" href="getUsers.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Users</a></li>
+           </ul>
+       </li>
+       <li class="treeview">
+           <a class="app-menu__item" href="#" data-toggle="treeview">
+               <i class="app-menu__icon fa fa-download fa-fw"></i>
+               <span class="app-menu__label">Working Plan</span>
+               <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+           </a>
+           <ul class="treeview-menu">
+               <li>
+                   <a class="treeview-item" <%--href="DraftVolume1.aspx"--%>>
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Draft Volume I
+                   </a>
+               </li>
+               <li>
+                   <a class="treeview-item" <%--href="DraftVolume2.aspx"--%>>
+                       <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Draft Volume II
+                   </a>
+               </li>
+           </ul>
+       </li>
+   </ul>
+   <%
+            }
+                    else
+                    if (Session["systemType"]?.ToString() == "nwp")
+                    {
+                %>
+                <ul class="app-menu">
+
+
+                    <li><a class="app-menu__item" href="About.aspx"><i class="app-menu__icon fa fa-info fa-fw"></i><span class="app-menu__label">About</span></a></li>
+                    <li><a class="app-menu__item" href="dashboard.aspx"><i class="app-menu__icon fa fa-dashboard fa-fw"></i><span class="app-menu__label">Dashboard</span></a></li>
+                    <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-upload fa-fw"></i><span class="app-menu__label">Data Upload</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+                        <ul class="treeview-menu">
+                            <li><a class="treeview-item" href="ForestAdminBoundaries.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Forest Admin Boundaries</a></li>
+                            <li><a class="treeview-item" href="AdminSpeciesData.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Species Data</a></li>
+                            <li><a class="treeview-item" href="samplingPlots.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Grid Based Sampling for WP</a></li>
+
+                        </ul>
+                    </li>
+                    <li><a class="app-menu__item" href="verifyAdminBoundaries.aspx"><i class="app-menu__icon fa fa-map-o fa-fw"></i><span class="app-menu__label">Forest Boundaries</span><i class="treeview-indicator fa fa-angle-right"></i></a></li>
+                    <li class="treeview">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                            <i class="app-menu__icon fa fa-edit fa-fw"></i>
+                            <span class="app-menu__label">Forest Data Forms</span>
+                            <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+                        </a>
+
+                        <ul class="treeview-menu">
+                            <li><a class="treeview-item" href="PlotApproach.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Approach</a></li>
+                            <li><a class="treeview-item" href="PlotDescription.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Description</a></li>
+                            <li><a class="treeview-item" href="PlotEnumeration.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Enumeration</a></li>
+                            <%--<li><a class="treeview-item" href="VillageLevelInformation.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Village Level Information</a></li>
+             <li><a class="treeview-item" href="Household.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Household</a></li>
+             <li><a class="treeview-item" href="TimberExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Timber Extraction</a></li>
+             <li><a class="treeview-item" href="NTFPExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>NTFP Extraction</a></li>
+              <li><a class="treeview-item" href="Smalltimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Small Timber Consumption </a></li>
+              <li><a class="treeview-item" href="BambooTimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Bamboo Consumption </a></li>
+              <li><a class="treeview-item" href="AssesmentTOFNonPrivateLandaspx.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Assessment of ToF in Non-Private land</a></li>
+              <li><a class="treeview-item" href="AnnualFuelConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Annual Fuel Consumption </a></li>
+              <li><a class="treeview-item" href="AnnualFodderConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Annual Fodder Consumption </a></li>
+              <li><a class="treeview-item" href="MADPsCollection.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> NTFP (including MADPs) Collection</a></li>
+             <li><a class="treeview-item" href="TOF.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Availability of Timber in Tree Outside Forest (TOF)</a></li>
+             <li><a class="treeview-item" href="FellingControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Felling Control Form Extraction</a></li>
+             <li><a class="treeview-item" href="CoupeControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Coupe Control Form Extraction</a></li>--%>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                            <i class="app-menu__icon fa fa-tasks fa-fw"></i>
+                            <span class="app-menu__label">Socio-Economic Forms</span>
+                            <i class="treeview-indicator fa fa-angle-right fa-fwt"></i>
+                        </a>
+                        <ul class="treeview-menu" style="overflow-y: scroll; height: 20vh; ">
+                            <li><a class="treeview-item" href="VillageLevelInformation.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Village Level Information</a></li>
+                            <li><a class="treeview-item" href="Household.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Household Information</a></li>
+                            <li><a class="treeview-item" href="AnnualFodderConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Fodder Consumption </a></li>
+                            <li><a class="treeview-item" href="AnnualFuelConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Fuel Consumption </a></li>
+                            <li><a class="treeview-item" href="Smalltimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Small Timber Consumption </a></li>
+                            <li><a class="treeview-item" href="BambooTimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Bamboo Consumption </a></li>
+
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                            <i class="app-menu__icon fa fa-tasks fa-fw"></i>
+                            <span class="app-menu__label">Ecosystem Services</span>
+                            <i class="treeview-indicator fa fa-angle-right fa-fwt"></i>
+                        </a>
+                        <ul class="treeview-menu" style="overflow-y: scroll; height: 20vh; max-width: 221px">
+                            <%-- <li>
+                 <a class="treeview-item" href="ProvisioningServices.aspx">
+                     <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Provisioning Services
+                 </a>
+             </li>--%>
+                            <li><a class="treeview-item" href="TOF.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Availability of Timber in Tree Outside Forest (TOF)</a></li>
+                            <li><a class="treeview-item" href="AssesmentTOFNonPrivateLandaspx.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Assessment of ToF in Non-Private land</a></li>
+                            <li><a class="treeview-item" href="MADPsCollection.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>NTFP (including MADPs) Collection</a></li>
+                            <li>
+                                <a class="treeview-item" href="HydrologicalServices.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Hydrological Services
+                                </a>
+                            </li>
+                            <li>
+                                <a class="treeview-item" href="CulturalServices.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Cultural/Tourism Services
+                                </a>
+                            </li>
+                            <li>
+                                <a class="treeview-item" href="PlusTrees.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plus-Trees / Mother Trees / Heritage Trees
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+
+                    <li class="treeview">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                            <i class="app-menu__icon fa fa-tasks fa-fw"></i>
+                            <span class="app-menu__label">Control Forms</span>
+                            <i class="treeview-indicator fa fa-angle-right fa-fwt"></i>
+                        </a>
+                        <ul class="treeview-menu" style="overflow-y: scroll; height: 20vh; max-width: 221px">
+
+                            <li><a class="treeview-item" href="TimberExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Timber Extraction</a></li>
+                            <li><a class="treeview-item" href="NTFPExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>NTFP Extraction</a></li>
+                            <li><a class="treeview-item" href="FellingControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Felling Control Form</a></li>
+                            <li><a class="treeview-item" href="CoupeControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Coupe Control Form</a></li>
+                            <li>
+                                <a class="treeview-item" href="Apos.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Plan of Operation (APO)
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="treeview">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                            <i class="app-menu__icon fa fa-file-text-o fa-fw"></i>
+                            <span class="app-menu__label">Reports</span>
+                            <i class="treeview-indicator fa fa-angle-right fa-fwt"></i>
+                        </a>
+                        <ul class="treeview-menu" style="overflow-y: scroll; max-height: 200px;">
+                            <li>
+                                <a class="treeview-item" href="carbonemissionmain.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Carbon Estimation
+                                </a>
+                            </li>
+                            <li>
+                                <a class="treeview-item" href="GrowingStockmain.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Growing Stock
+                                </a>
+                            </li>
+                            <li>
+                                <a class="treeview-item" href="Shannonmain.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Shannon Diversity Index
+                                </a>
+                            </li>
+                            <li>
+                                <a class="treeview-item" href="Simpsonmain.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Simpson Reciprocal Index
+                                </a>
+                            </li>
+                            <li>
+                                <a class="treeview-item" href="IVICal.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Importance Value Index (IVI)
+                                </a>
+                            </li>
+                            <li>
+                                <a class="treeview-item" href="TabularReports.aspx">
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Tabular Reports
+                                </a>
+                            </li>
+                            <%--  <li>
+                 <a class="treeview-item" href="Densewise.aspx">
+                     <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Dense-Wise Reports
+                 </a>
+             </li>
+              <li>
+                 <a class="treeview-item" href="DiaClasswise.aspx">
+                     <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Dia-Classwise Reports
+                 </a>
+             </li>
+              <li>
+                 <a class="treeview-item" href="StateWise.aspx">
+                     <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>State-Wise Reports
+                 </a>
+             </li>
+              <li>
+                 <a class="treeview-item" href="StemCount.aspx">
+                     <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>StemCount Reports
+                 </a>
+             </li>--%>
+                        </ul>
+                    </li>
+                    <li><a class="app-menu__item" href="getGISDashboard.aspx"><i class="app-menu__icon fa fa-globe fa-fw"></i><span class="app-menu__label">GIS Dashboard</span></a></li>
+                    <li class="treeview">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                            <i class="app-menu__icon fa fa-user fa-fw"></i>
+                            <span class="app-menu__label">User Management</span>
+                            <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a class="treeview-item" href="getUsers.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Users</a></li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                            <i class="app-menu__icon fa fa-download fa-fw"></i>
+                            <span class="app-menu__label">Working Plan</span>
+                            <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                                <a class="treeview-item" <%--href="DraftVolume1.aspx"--%>>
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Draft Volume I
+                                </a>
+                            </li>
+                            <li>
+                                <a class="treeview-item" <%--href="DraftVolume2.aspx"--%>>
+                                    <i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Draft Volume II
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <%
+                    }
+                    else
+                    if (Session["systemType"]?.ToString() == "pa")
+                    {
+                        %>
+                                     <ul class="app-menu">
+
+
+       <li><a class="app-menu__item" href="About.aspx"><i class="app-menu__icon fa fa-info fa-fw"></i><span class="app-menu__label">About</span></a></li>
+       <li><a class="app-menu__item" href="PMDashboard.aspx"><i class="app-menu__icon fa fa-dashboard fa-fw"></i><span class="app-menu__label">Dashboard</span></a></li>
+
+                                                <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-upload fa-fw"></i><span class="app-menu__label">Data Upload</span><i class="treeview-indicator fa fa-angle-right"></i></a>
+           <ul class="treeview-menu">
+               <li><a class="treeview-item" href="ForestAdminBoundaries.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Forest Admin Boundaries</a></li>
+               <li><a class="treeview-item" href="AdminSpeciesData.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Species Data</a></li>
+               <li><a class="treeview-item" href="samplingPlots.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Grid Based Sampling for WP</a></li>
+
+           </ul>
+       </li>
+       <li><a class="app-menu__item" href="verifyAdminBoundaries.aspx"><i class="app-menu__icon fa fa-map-o fa-fw"></i><span class="app-menu__label">Forest Boundaries</span><i class="treeview-indicator fa fa-angle-right"></i></a></li>
+       <li class="treeview">
+           <a class="app-menu__item" href="#" data-toggle="treeview">
+               <i class="app-menu__icon fa fa-edit fa-fw"></i>
+               <span class="app-menu__label">Forest Data Forms</span>
+               <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+           </a>
+
+           <ul class="treeview-menu">
+               <li><a class="treeview-item" href="PlotApproach.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Approach</a></li>
+               <li><a class="treeview-item" href="PlotDescription.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Description</a></li>
+               <li><a class="treeview-item" href="PlotEnumeration.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Enumeration</a></li>
+               <%--<li><a class="treeview-item" href="VillageLevelInformation.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Village Level Information</a></li>
+<li><a class="treeview-item" href="Household.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Household</a></li>
+<li><a class="treeview-item" href="TimberExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Timber Extraction</a></li>
+<li><a class="treeview-item" href="NTFPExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>NTFP Extraction</a></li>
+ <li><a class="treeview-item" href="Smalltimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Small Timber Consumption </a></li>
+ <li><a class="treeview-item" href="BambooTimber.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Annual Bamboo Consumption </a></li>
+ <li><a class="treeview-item" href="AssesmentTOFNonPrivateLandaspx.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Assessment of ToF in Non-Private land</a></li>
+ <li><a class="treeview-item" href="AnnualFuelConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Annual Fuel Consumption </a></li>
+ <li><a class="treeview-item" href="AnnualFodderConsumption.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Annual Fodder Consumption </a></li>
+ <li><a class="treeview-item" href="MADPsCollection.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> NTFP (including MADPs) Collection</a></li>
+<li><a class="treeview-item" href="TOF.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Availability of Timber in Tree Outside Forest (TOF)</a></li>
+<li><a class="treeview-item" href="FellingControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Felling Control Form Extraction</a></li>
+<li><a class="treeview-item" href="CoupeControl.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Coupe Control Form Extraction</a></li>--%>
+           </ul>
+       </li>
+
+                       <li><a class="app-menu__item" href="LandUseChanges.aspx"><i class="app-menu__icon fa fa-globe fa-fw"></i><span class="app-menu__label">Land Use Change</span></a></li>
+                       <li><a class="app-menu__item" href="detailsofedcs.aspx"><i class="app-menu__icon fa fa-clipboard-list fa-fw"></i><span class="app-menu__label">Details of Ecodevelopment Committees</span></a></li>
+                        <li><a class="app-menu__item" href="listofvillages.aspx"><i class="app-menu__icon fa fa-map-marked-alt fa-fw"></i><span class="app-menu__label">List Of Villages</span></a></li>
+                       <li><a class="app-menu__item" href="PANetworks.aspx"><i class="app-menu__icon fa fa-network-wired fa-fw"></i><span class="app-menu__label">PA Networks</span></a></li>
+                       <li><a class="app-menu__item" href="MajorBiodiversities.aspx"><i class="app-menu__icon fa fa-tree fa-fw"></i><span class="app-menu__label">Major biodiversity conservation initiatives and milestones</span></a></li>
+                      
+
+
+                       <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-hands-helping fa-fw"></i>
+        <span class="app-menu__label">Ecodevelopment program</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu" style="overflow-y: scroll; height: 20vh; ">
+                       <li><a class="treeview-item" href="EcodevelopmentTargets.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Targets and Implementation</a></li>
+                       <li><a class="treeview-item" href="MultiAgencyPrograms.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Connecting Multi-Agency Programs</a></li>
+                                                    </ul>
+</li>
+
+
+
+                        <li class="treeview">
+     <a class="app-menu__item" href="#" data-toggle="treeview">
+         <i class="app-menu__icon fa fa-tasks fa-fw"></i>
+         <span class="app-menu__label">Progress Of Activities & Fund</span>
+         <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+     </a>
+     <ul class="treeview-menu"  style="overflow-y: scroll; height: 20vh; ">
+                       <li><a class="treeview-item" href="ProgressOfActivities.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Progress Of Activities</a></li>
+                       <li><a class="treeview-item" href="AllotmentOfFundsRevenueExpenditures.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Funds, revenue and expenditure</a></li>
+                            </ul>
+</li>
+                       
+                       <li><a class="app-menu__item" href="LegalSettlements.aspx"><i class="app-menu__icon fa fa-balance-scale fa-fw"></i><span class="app-menu__label">Progress Of Legal Settlement</span></a></li>
+                       <li><a class="app-menu__item" href="Monitorings.aspx"><i class="app-menu__icon fa fa-eye fa-fw"></i><span class="app-menu__label">Monitoring Program in PA</span></a></li>
+                       
+                       <li class="treeview">
+                           <a class="app-menu__item" href="#" data-toggle="treeview">
+                               <i class="app-menu__icon fa fa-route fa-fw"></i>
+                               <span class="app-menu__label">Corridor</span>
+                               <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+                           </a>
+                           <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+                                     <%--<li><a class="treeview-item" href="CorridorsConservationInputsRequireds.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Existing Corridors-Conservation Inputs Required</a></li>--%>
+<li><a class="treeview-item" href="CorridorsConservationInputsAccomplisheds.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Existing Corridors-Conservation Inputs Required/Accomplished</a></li>
+      <%-- <li><a class="treeview-item" href="ExistingCorridorsMonitoringHabitatRecoverys.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Existing Corridors- Monitoring Habitat Recovery</a></li>--%>
+       <li><a class="treeview-item" href="PotentialCorridorsMonitoringHabitatRecoverys.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Potential Corridors- Monitoring Habitat Recovery</a></li>
+                           </ul>
+                       </li>
+                       
+                       <li><a class="app-menu__item" href="SurveyAndInventories.aspx"><i class="app-menu__icon fa fa-flask fa-fw"></i><span class="app-menu__label">Research - Survey And Inventories</span></a></li>
+                       <li><a class="app-menu__item" href="LeaseLands.aspx"><i class="app-menu__icon fa fa-file-contract fa-fw"></i><span class="app-menu__label">Lease Land</span></a></li>
+                       
+
+                                              <li class="treeview">
+                           <a class="app-menu__item" href="#" data-toggle="treeview">
+                               <i class="app-menu__icon fa fa-hiking fa-fw"></i>
+                               <span class="app-menu__label">Ecotourism Facility</span>
+                               <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+                           </a>
+                           <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+                                     <li><a class="treeview-item" href="EcoTourismPartners.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Ecotourism Partner	</a></li>
+<li><a class="treeview-item" href="DetailsOfNatureCamps.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Details of Nature Camps</a></li>
+                               <li><a class="treeview-item" href="EcoTourismUseOfFacilities.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>EcoTourism - Use of Facilities</a></li>
+      
+                           </ul>
+                       </li>
+
+                       <li><a class="app-menu__item" href="ApproachAndAccesses.aspx"><i class="app-menu__icon fa fa-road fa-fw"></i><span class="app-menu__label">Approach And Access</span></a></li>
+
+                                                                     <li class="treeview">
+                           <a class="app-menu__item" href="#" data-toggle="treeview">
+                               <i class="app-menu__icon fa fa-water fa-fw"></i>
+                               <span class="app-menu__label">Waterbodies & Maintenance</span>
+                               <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+                           </a>
+                           <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+                                     <li><a class="treeview-item" href="ProposedWaterbodies.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Proposed Waterbodies	</a></li>
+                                <li><a class="treeview-item" href="MaintenanceOfWaterbodies.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Maintenance of Waterbodies	</a></li>
+      
+                           </ul>
+                       </li>
+
+                                                                     <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-bridge fa-fw"></i>
+        <span class="app-menu__label">Infrastructure: Roads, Bridges & Buildings</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+              <li><a class="treeview-item" href="ConstructionOfInfrastructures.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Construction/Maintenance of Infrastructure		
+	</a></li>
+                  <li><a class="treeview-item" href="BoundariesAndFences.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Construction of boundaries, fences, CPTs, EPTs, Exclosures, Enclosures		
+</a></li>
+      
+      
+    </ul>
+</li>
+
+                                                                                            <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-user-tie fa-fw"></i>
+        <span class="app-menu__label">PA Staff</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+              <li><a class="treeview-item" href="StaffDetils.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Staff Details</a></li>
+       <li><a class="treeview-item" href="HumanResourceRequirements.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Human Resource Requirement</a></li>
+      
+    </ul>
+</li>
+
+                        <li><a class="app-menu__item" href="NewSpecieses.aspx"><i class="app-menu__icon fa fa-leaf fa-fw"></i><span class="app-menu__label">New Species Record</span></a></li>
+                        <li><a class="app-menu__item" href="AnimalPopulationTrends.aspx"><i class="app-menu__icon fa fa-paw fa-fw"></i><span class="app-menu__label"> Trends in Animal Population</span></a></li>
+                        <li><a class="app-menu__item" href="Convergences.aspx"><i class="app-menu__icon fa fa-project-diagram fa-fw"></i><span class="app-menu__label"> Convergence</span></a></li>
+
+
+                                                                     <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-frog fa-fw"></i>
+        <span class="app-menu__label">Floral & Faunal Mortality</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+              <li><a class="treeview-item" href="AnimalMortalities.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Animal Mortality</a></li>
+         <%--<li><a class="treeview-item" href="MortalityAttributedToPoachings.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Mortality attributed to poaching	</a></li>--%>
+       <%-- <li><a class="treeview-item" href="PredationOnDomesticLivestocks.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Predation on Domestic livestock by wild carnivores</a></li>
+        <li><a class="treeview-item" href="CattleKillingByWilds.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Details of cattle killing by wild carnivores</a></li>--%>
+        <li><a class="treeview-item" href="PlantsDiseaseAndMortalities.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plants- Disease and Mortality</a></li>
+    </ul>
+</li>
+                       
+                                                                                            <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-gavel fa-fw"></i>
+        <span class="app-menu__label">Offences</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+              <li><a class="treeview-item" href="IllicitFellingRemovalOfTrees.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Details of Illicit felling and removal of trees</a></li>
+         <li><a class="treeview-item" href="OffencesFromOfficeRecords.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Offences From Office records</a></li>
+        <li><a class="treeview-item" href="DetectedOffenceCases.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Offence cases detected</a></li>
+    </ul>
+</li>
+
+                                                                                                                   <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-shield-alt fa-fw"></i>
+        <span class="app-menu__label">Trapping Data</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+              <li><a class="treeview-item" href="TrappingCaptureDatas.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Trapping/Capture Data</a></li>
+        <li><a class="treeview-item" href="CameraTrappings.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Camera Trapping</a></li>
+    </ul>
+</li>
+
+
+                       <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-boxes fa-fw"></i>
+        <span class="app-menu__label">General PA Info</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+              <li><a class="treeview-item" href="GeneralPAInfos.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> General PA Info</a></li>
+        <li><a class="treeview-item" href="CompartmentWiseAreaOfPAs.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>  Compartment-Wise Area Of The PA	</a></li>
+    </ul>
+</li>
+
+                                              <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-cloud-sun fa-fw"></i>
+        <span class="app-menu__label">Weather Data</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+        <li><a class="treeview-item" href="Weathers.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Weather</a></li>
+            <%--  <li><a class="treeview-item" href="MonthlyAverageRainfalls.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i> Monthly average rainfall data</a></li>
+        <li><a class="treeview-item" href="Temperatures.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>   Temperature (C)</a></li>		
+        <li><a class="treeview-item" href="Humidities.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>   Humidity %</a></li>	--%>
+    </ul>
+</li>
+
+
+                       
+                                              <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-fire fa-fw"></i>
+        <span class="app-menu__label">Fire</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+        <li><a class="treeview-item" href="OutbreaksOfFires.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Outbreaks of Fire	 </a></li>
+              <li><a class="treeview-item" href="DetailsOfFirelines.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Details of fireline	 </a></li>
+        <%--<li><a class="treeview-item" href="NewExistingFirelines.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>New/Existing Firelines 	 </a></li>--%>
+
+    </ul>
+</li>
+
+                                                                                       <li class="treeview">
+    <a class="app-menu__item" href="#" data-toggle="treeview">
+        <i class="app-menu__icon fa fa-paw fa-fw"></i>
+        <span class="app-menu__label">Mammal Population Estimation</span>
+        <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+    </a>
+    <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+                <li><a class="treeview-item" href="MammalLineTransect.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Mammal Line Transect</a></li>
+   <li><a class="treeview-item" href="MammalVehicleCount.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Mammal Vehicle Count</a></li>
+<li><a class="treeview-item" href="OcularEstimation.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Ocular Estimation</a></li>
+        <li><a class="treeview-item" href="DungCount.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Dung Count</a></li>
+                     <li><a class="treeview-item" href="BlockCount.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Block Count</a></li>
+         <li><a class="treeview-item" href="MammalPopSignSurvey.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Sign Survey</a></li>
+
+    </ul>
+</li>
+
+                                                                                                                            <li class="treeview">
+<a class="app-menu__item" href="#" data-toggle="treeview">
+    <i class="app-menu__icon fa fa-dove fa-fw"></i>
+    <span class="app-menu__label">Birds Population Estimation</span>
+    <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+</a>
+<ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+    <li><a class="app-menu__item" href="BirdsPopLineTransect.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Birds Pop Line Transect</a></li>
+<li><a class="treeview-item" href="BirdsPopPointCount.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Birds Pop Point Count</a></li>
+<li><a class="treeview-item" href="BirdsPopWaterBird.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Birds Pop WaterBird</a></li>
+<li><a class="treeview-item" href="BirdsPopCallCount.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Birds Pop Call Count</a></li>
+<li><a class="treeview-item" href="BirdPopRoost.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Bird Pop Roost Count</a></li>
+
+        </ul>
+</li>
+                      
+     <li class="treeview">                                                                                                                                                               
+<a class="app-menu__item" href="#" data-toggle="treeview">
+    <i class="app-menu__icon fa fa-bug fa-fw"></i>
+    <span class="app-menu__label">Herpetofauna & Invertibrate</span>
+    <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+</a>
+<ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+                                         <li><a class="treeview-item" href="Herpetofauna.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Reptile and Amphibian Survey</a></li>
+                                         <li><a class="treeview-item" href="InvertibrateSurvey.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Invertibrate Survey</a></li>
+                                        
+            </ul>
+</li>
+
+                                              <li class="treeview">                                                                                                                                                               
+<a class="app-menu__item" href="#" data-toggle="treeview">
+    <i class="app-menu__icon fa fa-user fa-fw"></i>
+    <span class="app-menu__label">Habitat Assessment</span>
+    <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+</a>
+ <ul class="treeview-menu"   style="overflow-y: scroll; height: 20vh; ">
+                                         <li><a class="treeview-item" href="HabitatAssessment.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Habitat Assessment</a></li>
+                                         <li><a class="treeview-item" href="HumanDisturbance.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Human Disturbance</a></li>
+                                                     </ul>
+</li>
+
+                                     <li><a class="app-menu__item" href="PatrollingForm.aspx"><i class="app-menu__icon fa fa-binoculars fa-fw"></i><span class="app-menu__label">Patrolling and Monitoring</span></a></li>
+                                         <li><a class="app-menu__item" href="Enumeration.aspx"><i class="app-menu__icon fa fa-bar-chart fa-fw"></i><span class="app-menu__label">Plot Description</span></a></li>
+                                     
+                                     </ul>
+                <%
+                    }
+                %>
+               
+            </aside>
+
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+            <script src="vali/js/plugins/sweetalert.min.js"></script>
+
+            <%-- <footer class="app-footer">
+                <div class="col-md-12 col-sm-12">
+                    <p class="text-center">VAN IT System is an Integrated Forest Management Toolbox (IFMT) Developed and Managed by  &nbsp;<a href="https://www.gisfy.co.in/" target="_blank"><img src="vali/images/gisfyLogo.png" style="height: 30px;" /></a>.</p>
+                </div>
+            </footer>--%>
+            <script type="text/javascript" src="vali/js/plugins/chart.js"></script>
+            <script src="vali/js/plugins/pace.min.js"></script>
+            <script src="vali/js/popper.min.js"></script>
+            <script src="vali/js/bootstrap.min.js"></script>
+            <script src="vali/js/main.js"></script>
+            <script src="vali/js/custom.js"></script>
+        </div>
+    </form>
+</body>
+</html>

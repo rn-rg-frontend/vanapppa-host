@@ -1,0 +1,131 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Block.master.cs" Inherits="vansystem.Block.Block" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="FES">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="../vali/img/favicon.png" />
+    
+    <title>Van - Upload Forest Admin Boundaries</title>
+    <link rel="stylesheet" type="text/css" href="../vali/css/main.css">
+
+
+    <link rel="stylesheet" type="text/css" href="../vali/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../vali/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="../vali/css/font-awesome-custom.css">
+    <link rel="stylesheet" type="text/css" href="../vali/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="../global/css/ol4.css">
+
+    <script src="../vali/js/jquery-3.2.1.min.js"></script>
+    <link media="screen" rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+     <script>
+        var url = window.location;
+       
+        $('ul.app-menu a').filter(function () {
+            return this.href == url;
+        }).parent().siblings().removeClass('active').end().addClass('active');
+      
+        $('ul.treeview-menu a').filter(function () {
+            return this.href == url;
+        }).parentsUntil(".app-menu > .treeview-menu").siblings().removeClass('active menu-open').end().addClass('active menu-open');
+     </script>
+
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body class="app sidebar-mini">
+    <form id="form1" runat="server">
+        <div>
+            <div id="loader">
+                <div class="sk-folding-cube">
+                    <div class="sk-cube1 sk-cube"></div>
+                    <div class="sk-cube2 sk-cube"></div>
+                    <div class="sk-cube4 sk-cube"></div>
+                    <div class="sk-cube3 sk-cube"></div>
+                    <em>Van</em>
+                </div>
+            </div>
+            <header class="app-header" style="background: #fff; border-bottom: 4px solid #004990;">
+                <a class="app-sidebar__toggle" href="#" data-toggle="sidebar"></a>
+               <a href="About.aspx">
+                    <img src="../vali/img/van-logo.jpg" /></a>
+                <ul class="app-nav">
+                   
+                    <asp:Label ID="lblloginsucess" runat="server" Text=""></asp:Label>
+                    <li class="dropdown">
+                        <a class="app-nav__item" href="#" data-toggle="dropdown"><i class="fa fa-user fa-lg"></i></a>
+                        <ul class="dropdown-menu settings-menu dropdown-menu-right">
+                         
+                            <li>
+                                <a class="dropdown-item" href="About.aspx">
+                                    <i class="fa fa-address-book fa-lg"></i>My Account
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="LogoutPage.aspx">
+                                    <i class="fa fa-sign-in fa-lg"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </header>
+          
+            <aside class="app-sidebar">
+               <div class="app-sidebar__user">
+                   
+                    <span style="display: inline-block; border: 1px solid #fff; background: #36b439; padding: 4px 8px; border-radius: 30px; margin-right: 10px;"><i class="fa fa-user" style="font-size: 150%;"></i></span>
+                    <div>
+                        <p class="app-sidebar__user-name"><%=Session["name"].ToString() %></p>
+                      
+                    </div>
+                </div>
+                <ul class="app-menu">
+                    <li><a class="app-menu__item" href="About.aspx"><i class="app-menu__icon fa fa-info fa-fw"></i><span class="app-menu__label">About</span></a></li>
+                <li class="treeview">
+                        <a class="app-menu__item" href="#" data-toggle="treeview">
+                            <i class="app-menu__icon fa fa-edit fa-fw"></i>
+                            <span class="app-menu__label">NWPC Forms</span>
+                            <i class="treeview-indicator fa fa-angle-right fa-fw"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a class="treeview-item" href="PlotApproach.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Approach</a></li>
+                            <li><a class="treeview-item" href="PlotDescription.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Description</a></li>
+                            <li><a class="treeview-item" href="PlotEnumeration.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Plot Enumeration</a></li>
+                            <li><a class="treeview-item" href="VillageLevelInformation.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Village Level Information</a></li>
+                            <li><a class="treeview-item" href="Household.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Household</a></li>
+                            <li><a class="treeview-item" href="TimberExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>Timber Extraction</a></li>
+                            <li><a class="treeview-item" href="NTFPExtraction.aspx"><i class="icon fa fa-dot-circle-o fa-xxs fa-fw"></i>NTFP extraction</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </aside>
+
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+            <script src="../vali/js/plugins/sweetalert.min.js"></script>
+           
+           <%-- <footer class="app-footer">
+                <div class="col-md-12 col-sm-12">
+                    <p class="text-center">VAN IT System is an Integrated Forest Management Toolbox (IFMT) Developed and Managed by &nbsp;<a href="https://www.gisfy.co.in/" target="_blank"><img src="../vali/images/gisfyLogo.png" style="height: 30px;" /></a>.</p>
+                </div>
+            </footer>--%>
+            <script type="text/javascript" src="../vali/js/plugins/chart.js"></script>
+            <script src="../vali/js/plugins/pace.min.js"></script>
+            <script src="../vali/js/popper.min.js"></script>
+            <script src="../vali/js/bootstrap.min.js"></script>
+            <script src="../vali/js/main.js"></script>
+            <script src="../vali/js/custom.js"></script>
+        </div>
+    </form>
+</body>
+</html>
+

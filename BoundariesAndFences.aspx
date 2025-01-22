@@ -1,0 +1,359 @@
+﻿<%@ Page Title="Van - Construction of boundaries, fences, CPTs, EPTs, Exclosures, Enclosures" Language="C#" MasterPageFile="~/VanUser.Master" AutoEventWireup="true" CodeBehind="BoundariesAndFences.aspx.cs" Inherits="vansystem.BoundariesAndFences" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="FES">
+    <meta name="keyword" content="">
+    <link rel="shortcut icon" href="/vali/img/favicon.png" />
+    <title>Van - Construction of boundaries, fences, CPTs, EPTs, Exclosures, Enclosures</title>
+    <link rel="stylesheet" type="text/css" href="/vali/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/vali/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/vali/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/vali/css/font-awesome-custom.css">
+    <link rel="stylesheet" type="text/css" href="/vali/css/custom.css">
+    <link rel="stylesheet" type="text/css" href="/global/css/ol4.css">
+    <script type="text/javascript" src="/vali/js/jquery-3.2.1.min.js"></script>
+    <script>
+        var object = { status: false, ele: null };
+        function NumberCheck(input) {
+
+            let value = input.value;/*<a href="NTFPExtraction.aspx">NTFPExtraction.aspx</a>*/
+            let numbers = value.replace(/[^0-9]/g, "");
+            input.value = numbers;
+        }
+
+        function DecimalCheck(input) {
+
+            let value = input.value;
+            let numbers = value.replace(/[^0-9.]/g, "");
+            input.value = numbers;
+        }
+
+        function SplCharCheck(input) {
+
+            let value = input.value;
+            let numbers = value.replace(/[^A-Za-z.,/_&( )@]/g, "").trimStart();
+            input.value = numbers;
+        }
+
+        function YearCheck(input) {
+            let value = input.value;
+
+            // Keep only digits and limit to 4 digits
+            let year = value.replace(/[^0-9]/g, "").substring(0, 4);
+
+            input.value = year;
+        }
+        function confirmDelete1(ev) {
+            if (object.status) {
+                object.status = false; // Reset status for next confirmation
+                return true;
+            }
+
+            swal({
+                title: "Are you sure you want to delete this entry?",
+                //text: "Your will not be able to recover this record file!",
+                text: "This entry cannot be recovered and will be deleted permanently.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "No, cancel!",
+                closeOnConfirm: true,
+            },
+                function () {
+                    object.status = true;
+                    object.ele = ev;
+                    object.ele.click();
+                    object.status = false; // Reset status after confirmation is complete
+                });
+
+            return false;
+        }
+    </script>
+    <style>
+        th {
+            background: #51c551 !important;
+            color: white !important;
+            position: sticky !important;
+            top: 0;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        th, td {
+            padding: 0.25rem;
+        }
+
+        .tile {
+            margin-left: 100px;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        .card-body {
+            overflow-x: scroll;
+            overflow-y: scroll;
+            max-height: calc(75vh - 100px);
+            padding: 0;
+            margin-top: 10px;
+        }
+
+        table.dataTable {
+            clear: both;
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+            max-width: none !important;
+        }
+
+        .required-field-message {
+            color: Red;
+            /*visibility: visible !important;*/
+        }
+    </style>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+
+    <div class="app-content">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <div class="tile" style="margin-left: -10px;">
+                    <div class="pull-right">
+                        <a href="BoundariesAndFence.aspx" class="btn btn-xs btn-primary"><i class="fa fa-plus-circle"></i>Add Construction of boundaries, fences, CPTs, EPTs, Exclosures, Enclosures</a>
+                    </div>
+                    <div class="pull-right">
+                        <asp:Button ID="btnExportToExcel" class="btn btn-xs btn-primary" runat="server" Text="Download Excel" OnClick="btnExportToExcel_Click" />&nbsp;&nbsp;&nbsp;&nbsp;
+                    </div>
+                    <h3 class="tile-title">Construction of boundaries, fences, CPTs, EPTs, Exclosures, Enclosures</h3>
+                    <div class="d-flex justify-content-start align-items-center" style="padding-top: 6px; padding-right: 15px;">
+                        Show  
+                        <div class="pl-2 pr-2">
+                            <asp:DropDownList ID="ddlPageSize" Style="background-color: #004990; color: white; width: 70px; border-radius: 3px; height: 30px" runat="server" AutoPostBack="true" OnSelectedIndexChanged="ddlPageSize_SelectedIndexChanged">
+                                <asp:ListItem Text="10" Value="10" />
+                                <asp:ListItem Text="25" Value="25" />
+                                <asp:ListItem Text="50" Value="50" />
+                                <asp:ListItem Text="100" Value="100" />
+                                <asp:ListItem Text="200" Value="200" />
+                            </asp:DropDownList>
+                        </div>
+                        entries
+                    </div>
+
+
+                    <div class="tile-body">
+                        <div class="card-body">
+                            <table id="users">
+                                <asp:GridView ID="GVgetuser" runat="server" AutoGenerateColumns="false" GridLines="Both" frame="void"
+                                    rules="rows" CellPadding="4" CellSpacing="4" Width="100%" DataKeyNames="id" OnRowCommand="GVget_RowCommand" OnRowEditing="GVgetuser_RowEditing"
+                                    OnRowCancelingEdit="GVgetuser_RowCancelingEdit"
+                                    OnRowUpdating="GVgetuser_RowUpdating"
+                                    OnRowDataBound="GridView1_RowDataBound"
+                                    OnPageIndexChanging="GVgetuser_PageIndexChanging" AllowPaging="true" PageSize="10">
+                                    <RowStyle BackColor="White" BorderColor="ControlLight" />
+                                    <HeaderStyle BorderColor="ControlLight" />
+                                    <PagerSettings Mode="NumericFirstLast" FirstPageText="First" PageButtonCount="10" LastPageText="Last" />
+                                    <Columns>
+                                        <asp:TemplateField HeaderText="S.No">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblRowNumber" Text='<%# Container.DataItemIndex + 1 %>' runat="server" />
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Category">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbltype" Text='<%# Bind("type") %>' runat="server" />
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:DropDownList ID="ddltype" Width="150px" runat="server" AutoPostBack="true" CssClass="form-control" OnSelectedIndexChanged="ddlType_SelectedIndexChanged">
+                                                    <asp:ListItem Text="Select Type" Value=""></asp:ListItem>
+                                                    <asp:ListItem Text="Block" Value="Block"></asp:ListItem>
+                                                    <asp:ListItem Text="Compartment" Value="Compartment"></asp:ListItem>
+                                                    <asp:ListItem Text="Fences" Value="Fences"></asp:ListItem>
+                                                    <asp:ListItem Text="Enclosure" Value="Enclosure"></asp:ListItem>
+                                                    <asp:ListItem Text="Zone" Value="Zone"></asp:ListItem>
+                                                    <asp:ListItem Text="Others" Value="Others"></asp:ListItem>
+                                                </asp:DropDownList>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server"
+                                                    ControlToValidate="ddltype" ErrorMessage="Please fill out this field."
+                                                    CssClass="required-field-message" Display="Dynamic"></asp:RequiredFieldValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Other Type">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblother_type" Text='<%# Bind("other_type") %>' runat="server" />
+
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="other_type" Text='<%# Bind("other_type") %>' runat="server" CssClass="form-control" placeholder="Other Type" MaxLength="50" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" Display="Dynamic" ControlToValidate="other_type" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Category of Construction">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbcategory_of_construction" Text='<%# Bind("category_of_construction") %>' runat="server" />
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:DropDownList ID="ddlcategory_of_construction" Width="150px" runat="server" AutoPostBack="true" CssClass="form-control" >
+                                                    <asp:ListItem Text="Select Category" Value=""></asp:ListItem>
+                                                    <asp:ListItem Text="Power fence" Value="Power fence"></asp:ListItem>
+                                                    <asp:ListItem Text="Dry rubble" Value="Dry rubble"></asp:ListItem>
+                                                    <asp:ListItem Text="Chain link" Value="Chain link"></asp:ListItem>
+                                                    <asp:ListItem Text="Local material" Value="Local material"></asp:ListItem>
+                                                </asp:DropDownList>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server"
+                                                    ControlToValidate="ddlcategory_of_construction" ErrorMessage="Please fill out this field."
+                                                    CssClass="required-field-message" Display="Dynamic"></asp:RequiredFieldValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Range">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblrange" Text='<%# Bind("range") %>' runat="server" />
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:DropDownList ID="ddlrange" Width="150px" runat="server" AutoPostBack="true" CssClass="form-control">
+                                                </asp:DropDownList>
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server"
+                                                    ControlToValidate="ddlrange" ErrorMessage="Please fill out this field."
+                                                    CssClass="required-field-message" Display="Dynamic"></asp:RequiredFieldValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Compartment Name">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblcompartment_name" Text='<%# Bind("compartment_name") %>' runat="server" />
+
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="compartment_name" Text='<%# Bind("compartment_name") %>' runat="server" CssClass="form-control" placeholder="Compartment Name" MaxLength="50" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" Display="Dynamic" ControlToValidate="compartment_name" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Length (in meters)">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbllength_in_meters" Text='<%# Bind("length_in_meters") %>' runat="server" />
+
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="length_in_meters" Text='<%# Bind("length_in_meters") %>' runat="server" CssClass="form-control" placeholder="Length (in meters)" MaxLength="2000000000" oninput="DecimalCheck(this)" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" Display="Dynamic" ControlToValidate="length_in_meters" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ForeColor="Red" ID="RangeValidator1" runat="server" ControlToValidate="length_in_meters" MinimumValue="1" MaximumValue="2000000000" Type="Integer" ErrorMessage="Please enter a valid value">
+                                                </asp:RangeValidator>
+
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Number of Additionalities">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblnumber_of_additionalities" Text='<%# Bind("number_of_additionalities") %>' runat="server" />
+
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="number_of_additionalities" Text='<%# Bind("number_of_additionalities") %>' runat="server" CssClass="form-control" placeholder="Number of Additionalities" MaxLength="2000000000" oninput="NumberCheck(this)" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator7" runat="server" Display="Dynamic" ControlToValidate="number_of_additionalities" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ForeColor="Red" ID="RangeValidator2" runat="server" ControlToValidate="number_of_additionalities" MinimumValue="1" MaximumValue="2000000000" Type="Integer" ErrorMessage="Please enter a valid value">
+                                                </asp:RangeValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Height (in meters)">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblheight" Text='<%# Bind("height") %>' runat="server" />
+
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="height" Text='<%# Bind("height") %>' runat="server" CssClass="form-control" placeholder="Height (in meters)" MaxLength="2000000000" oninput="NumberCheck(this)" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator8" runat="server" Display="Dynamic" ControlToValidate="height" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ForeColor="Red" ID="RangeValidator3" runat="server" ControlToValidate="height" MinimumValue="1" MaximumValue="2000000000" Type="Integer" ErrorMessage="Please enter a valid value">
+                                                </asp:RangeValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Area">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblarea" Text='<%# Bind("area") %>' runat="server" />
+
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="area" Text='<%# Bind("area") %>' runat="server" CssClass="form-control" placeholder="Area" MaxLength="2000000000" oninput="NumberCheck(this)" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator9" runat="server" Display="Dynamic" ControlToValidate="area" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ForeColor="Red" ID="RangeValidator4" runat="server" ControlToValidate="area" MinimumValue="1" MaximumValue="2000000000" Type="Integer" ErrorMessage="Please enter a valid value">
+                                                </asp:RangeValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Depth (in meters)">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lbldepth" Text='<%# Bind("depth") %>' runat="server" />
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="depth" Text='<%# Bind("depth") %>' runat="server" CssClass="form-control" placeholder="Depth (in meters)" MaxLength="2000000000" oninput="NumberCheck(this)" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator10" runat="server" Display="Dynamic" ControlToValidate="depth" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ForeColor="Red" ID="RangeValidator5" runat="server" ControlToValidate="depth" MinimumValue="1" MaximumValue="2000000000" Type="Integer" ErrorMessage="Please enter a valid value">
+                                                </asp:RangeValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Width (in meters)">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblwidth" Text='<%# Bind("width") %>' runat="server" />
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="width" Text='<%# Bind("width") %>' runat="server" CssClass="form-control" placeholder="Width (in meters)" MaxLength="2000000000" oninput="NumberCheck(this)" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator11" runat="server" Display="Dynamic" ControlToValidate="width" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                                <asp:RangeValidator ForeColor="Red" ID="RangeValidator6" runat="server" ControlToValidate="depth" MinimumValue="1" MaximumValue="2000000000" Type="Integer" ErrorMessage="Please enter a valid value">
+                                                </asp:RangeValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Remarks">
+                                            <ItemTemplate>
+                                                <asp:Label ID="lblremarks" Text='<%# Bind("remarks") %>' runat="server" />
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:TextBox ID="remarks" Text='<%# Bind("remarks") %>' runat="server" CssClass="form-control" placeholder="Remarks" MaxLength="5000000" />
+                                                <asp:RequiredFieldValidator ID="RequiredFieldValidator12" runat="server" Display="Dynamic" ControlToValidate="remarks" ErrorMessage="Please fill out this field." ForeColor="Red">
+                                                </asp:RequiredFieldValidator>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+
+                                        <asp:TemplateField HeaderText="Edit">
+                                            <ItemTemplate>
+                                                <asp:LinkButton ID="lnkEdit" runat="server" CommandName="Edit" CssClass="btn btn-primary" Text="Edit"></asp:LinkButton>
+                                            </ItemTemplate>
+                                            <EditItemTemplate>
+                                                <asp:LinkButton ID="lnkUpdate" runat="server" CssClass="btn btn-primary" CommandName="Update" Text="Update"></asp:LinkButton>
+                                                <asp:LinkButton ID="lnkCancel" runat="server" CssClass="btn btn-danger" CommandName="Cancel" Text="Cancel"></asp:LinkButton>
+                                            </EditItemTemplate>
+                                        </asp:TemplateField>
+                                        <asp:TemplateField HeaderText="Delete" ShowHeader="False">
+                                            <ItemTemplate>
+                                                <asp:ImageButton ImageUrl='~/images/bin.png' ID="Button1" ToolTip="Delete" runat="server" CausesValidation="false" CommandName="cmdDelete" CommandArgument="<%#((GridViewRow)Container).RowIndex %>" OnClientClick="return confirmDelete1(this)" Width="20px" Height="20px" />
+                                            </ItemTemplate>
+                                        </asp:TemplateField>
+                                    </Columns>
+                                </asp:GridView>
+                            </table>
+                        </div>
+                        <ul class="pagination" id="pagingnation" visible="false" runat="server" style="margin-top: 6px; margin-left: 9px; color: #5cb85c">
+                            <asp:Repeater ID="rptPager" runat="server">
+                                <ItemTemplate>
+                                    <li>
+                                        <asp:LinkButton ID="lnkPage" runat="server" Text='<%#Eval("Text") %>' CommandArgument='<%# Eval("Value") %>'
+                                            Enabled='<%# Eval("Enabled") %>' OnClick="lnkPage_Click"></asp:LinkButton>
+                                    </li>
+                                </ItemTemplate>
+                            </asp:Repeater>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/vali/js/plugins/sweetalert.min.js"></script>
+    <script src="/vali/js/plugins/jquery.dataTables.min.js"></script>
+    <script src="/vali/js/users.js"></script>
+</asp:Content>
